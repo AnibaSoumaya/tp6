@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Produit } from '../model/produit.model';
 import { ProduitService } from '../produit.service';
+import { ActivatedRoute,Router } from '@angular/router';
 
 @Component({
   selector: 'app-produits',
@@ -9,18 +10,34 @@ import { ProduitService } from '../produit.service';
 })
 export class produitsComponent
 {
-  produits : Produit[]; //un tableau de Produit
+  produits! : Produit[]; //un tableau de Produit
   constructor(private produitService: ProduitService ) 
   {
-  this.produits = produitService.listeProduits();
+  //this.produits = produitService.listeProduits();
   }
-  supprimerProduit(p: Produit)
+  ngOnInit(): void
   {
-    //console.log(p);
-    let conf = confirm("Etes-vous sûr ?");
-    if (conf)
-    this.produitService.supprimerProduit(p);
+    this.chargerProduits(); 
+  } 
+  chargerProduits()
+  {   this.produitService.listeProduit().subscribe(prods => {console.log(prods);
+      this.produits = prods; 
+      });  
   }
   
+ supprimerProduit(p: Produit) 
+ {       
+    let conf = confirm("Etes-vous sûr ?");
+    if (conf)
+    this.produitService.supprimerProduit(p.idProduit).subscribe(() => {   
+    console.log("produit supprimé"); 
+    this.chargerProduits(); 
+    }); 
+ }
 
 }
+
+  
+  
+
+
